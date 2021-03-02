@@ -1,19 +1,49 @@
 version: 2.1
 
 workflows:
-  test-deploy:
+  version: 2
+  commit-workflow:
     jobs:
-      - test
+      - build
+      - test:
+          requires:
+            - build
+  scheduled-workflow:
+    triggers:
+      - schedule:
+          cron: "* * * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
 
 jobs:
-  test:
+  build:
     docker:
       - image: cimg/node:15.10.0
     steps:
       - checkout
       - run: 
-          name: Install dependencies
-          command: npm install
+          name: Build command
+          command: echo "build command is executed"
+  test:
+    docker:
+      - image: cimg/node:15.10.0
+    steps:
+      - checkout
       - run:
-          name: Run tests
-          command: npm run test
+          name: Test command
+          command: echo "test is executed"
+  deploy:
+    docker:
+      - image: cimg/node:15.10.0
+    steps:
+      - checkout
+      - run:
+          name: Deploy command
+          command: echo "deploy command is executed"

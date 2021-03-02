@@ -1,44 +1,24 @@
 version: 2.1
 
-workflows:
-  version: 2
-  commit-workflow:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
-  scheduled-workflow:
-    triggers:
-      - schedule:
-          cron: "1 * * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - build
-      - deploy:
-          requires:
-            - build
-
 jobs:
-  build:
+  docker-build:
     docker:
       - image: cimg/node:15.10.0
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: 
-          name: Build command
-          command: echo "build command is executed"
-  test:
+          name: Docker build command
+          command: docker build . 
+  docker-run:
     docker:
       - image: cimg/node:15.10.0
     steps:
       - checkout
       - run:
-          name: Test command
-          command: echo "test is executed"
+          name: Docker test command 
+          command: echo "Here the docker image needs to be run"
   deploy:
     docker:
       - image: cimg/node:15.10.0
@@ -47,3 +27,27 @@ jobs:
       - run:
           name: Deploy command
           command: echo "deploy command is executed"
+
+workflows:
+  version: 2
+
+  docker-workflow:
+    jobs:
+      - docker-build
+      - docker-run:
+          requires:
+            - docker-build
+  
+  deploy-workflow:
+    jobs:
+      - docker-build
+      - docker-run:
+          requires:
+            - docker-build
+      - deploy:
+          requires:
+            - docker-run
+
+  
+
+

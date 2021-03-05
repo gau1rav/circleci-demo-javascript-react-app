@@ -36,7 +36,7 @@ jobs:
           command: |
             echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:<< parameters.IMAGE_TAG >>
-            docker push $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:<< parameters.IMAGE_TAG >>
   deploy-on-any:
     parameters:
       IMAGE_TAG:

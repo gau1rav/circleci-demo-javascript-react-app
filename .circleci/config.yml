@@ -14,7 +14,7 @@ jobs:
       - setup_remote_docker
       - run: 
           name: Docker build command
-          command: docker build -t $IMAGE_NAME:latest
+          command: docker build -t $IMAGE_NAME:latest .
       - run:
           name: Archive Docker Image
           command: docker save -o image.tar $IMAGE_NAME:latest

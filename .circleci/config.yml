@@ -34,7 +34,7 @@ jobs:
         - run:
             name: Publish image to DockerHub
             command: |
-              echo "gaurav_Docker1" docker login -u "gau1rav" --password-stdin
+              echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
               IMAGE_TAG = "0.0:${CIRCLE_BUILD_NUM}"
               docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
               docker push $IMAGE_NAME:$IMAGE_TAG
@@ -50,7 +50,7 @@ jobs:
         - run:
             name: Publish image to DockerHub
             command: |
-              echo "gaurav_Docker1" docker login -u "gau1rav" --password-stdin
+              echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
               docker push $IMAGE_NAME:latest
   deploy-on-master:
       executor: docker-publisher
@@ -64,7 +64,7 @@ jobs:
         - run:
             name: Publish image to DockerHub
             command: |
-              echo "gaurav_Docker1" docker login -u "gau1rav" --password-stdin
+              echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
               docker tag $IMAGE_NAME:latest $IMAGE_NAME:LTS
               docker push $IMAGE_NAME:LTS
 workflows:

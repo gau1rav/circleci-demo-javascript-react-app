@@ -67,6 +67,8 @@ jobs:
               echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
               docker tag $IMAGE_NAME:latest $IMAGE_NAME:LTS
               docker push $IMAGE_NAME:LTS
+  hold-for-approval:
+
 workflows:
   version: 2
   
@@ -81,16 +83,25 @@ workflows:
               ignore:
                 - master
                 - develop
+      - hold-for-approval:
+          type: approval
+          requires: 
+            - build-docker
+          filters:
+            branches:
+              only:
+                - develop
+                - master
       - deploy-on-master:
           requires:
-            - build-docker
+            - hold-for-approval
           filters:
             branches:
               only:
                 - master
       - deploy-on-develop:
           requires:
-            - build-docker
+            - hold-for-approval
           filters:
             branches:
               only:

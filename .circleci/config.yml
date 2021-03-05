@@ -6,11 +6,9 @@ jobs:
       - image: cimg/node:15.10.0
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run: 
           name: Docker build command
-          command: docker build . 
+          command: echo "Here we will build the docker"
   docker-run:
     docker:
       - image: cimg/node:15.10.0

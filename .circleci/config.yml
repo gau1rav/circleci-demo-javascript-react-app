@@ -22,52 +22,85 @@ jobs:
           root: .
           paths:
             - ./image.tar
+  publish-docker: &publish-docker
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish image to DockerHub
+          command: |
+            echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$<< parameters.IMAGE_TAG>>
+            docker push $IMAGE_NAME:$IMAGE_TAG
   deploy-on-any:
-      executor: docker-publisher
-      steps:
-        - attach_workspace:
-            at: /tmp/workspace
-        - setup_remote_docker
-        - run:
-            name: Load archived docker image
-            command: docker load -i /tmp/workspace/image.tar
-        - run:
-            name: Publish image to DockerHub
-            command: |
-              echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
-              IMAGE_TAG = "0.0:${CIRCLE_BUILD_NUM}"
-              docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
-              docker push $IMAGE_NAME:$IMAGE_TAG
-  deploy-on-develop:
-      executor: docker-publisher
-      steps:
-        - attach_workspace:
-            at: /tmp/workspace
-        - setup_remote_docker
-        - run:
-            name: Load archived docker image
-            command: docker load -i /tmp/workspace/image.tar
-        - run:
-            name: Publish image to DockerHub
-            command: |
-              echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
-              docker push $IMAGE_NAME:latest
+    parameters:
+      IMAGE_TAG:
+        type: string
+        default: "0.0:${CIRCLE_BUILD_NUM}"
+    <<: *publish-docker
   deploy-on-master:
-      executor: docker-publisher
-      steps:
-        - attach_workspace:
-            at: /tmp/workspace
-        - setup_remote_docker
-        - run:
-            name: Load archived docker image
-            command: docker load -i /tmp/workspace/image.tar
-        - run:
-            name: Publish image to DockerHub
-            command: |
-              echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
-              docker tag $IMAGE_NAME:latest $IMAGE_NAME:LTS
-              docker push $IMAGE_NAME:LTS
-  hold-for-approval:
+    parameters:
+      IMAGE_TAG:
+        type: string
+        default: "LTS"
+    <<: *publish-docker
+  deploy-on-develop:
+    parameters:
+      IMAGE_TAG:
+        type: string
+        default: "LATEST"
+    <<: *publish-docker
+    
+  # deploy-on-any:
+  #     executor: docker-publisher
+  #     steps:
+  #       - attach_workspace:
+  #           at: /tmp/workspace
+  #       - setup_remote_docker
+  #       - run:
+  #           name: Load archived docker image
+  #           command: docker load -i /tmp/workspace/image.tar
+  #       - run:
+  #           name: Publish image to DockerHub
+  #           command: |
+  #             echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
+  #             IMAGE_TAG = "0.0:${CIRCLE_BUILD_NUM}"
+  #             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
+  #             docker push $IMAGE_NAME:$IMAGE_TAG
+  # deploy-on-develop:
+  #     executor: docker-publisher
+  #     steps:
+  #       - attach_workspace:
+  #           at: /tmp/workspace
+  #       - setup_remote_docker
+  #       - run:
+  #           name: Load archived docker image
+  #           command: docker load -i /tmp/workspace/image.tar
+  #       - run:
+  #           name: Publish image to DockerHub
+  #           command: |
+  #             echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
+  #             docker push $IMAGE_NAME:latest
+  # deploy-on-master:
+  #     executor: docker-publisher
+  #     steps:
+  #       - attach_workspace:
+  #           at: /tmp/workspace
+  #       - setup_remote_docker
+  #       - run:
+  #           name: Load archived docker image
+  #           command: docker load -i /tmp/workspace/image.tar
+  #       - run:
+  #           name: Publish image to DockerHub
+  #           command: |
+  #             echo "gaurav_Docker1" | docker login -u "gau1rav" --password-stdin
+  #             docker tag $IMAGE_NAME:latest $IMAGE_NAME:LTS
+  #             docker push $IMAGE_NAME:LTS
 
 workflows:
   version: 2

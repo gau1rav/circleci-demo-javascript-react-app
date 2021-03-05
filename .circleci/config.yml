@@ -57,18 +57,21 @@ jobs:
       steps:
         - attach_workspace:
             at: /tmp/workspace
-        - setup_remote_docker
         - run:
-            name: Load archived docker image
-            command: docker load -i /tmp/workspace/image.tar
-        - run:
-            name: Publish image to DockerHub
-            command: |
-              echo "gaurav_Docker1" docker login -u "gau1rav" --password-stdin
-              IMAGE_TAG = "LTS"
-              docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
-              docker push $IMAGE_NAME:$IMAGE_TAG
+            name: List directories
+            command: ls
 
+        # - setup_remote_docker
+        # - run:
+        #     name: Load archived docker image
+        #     command: docker load -i /tmp/workspace/image.tar
+        # - run:
+        #     name: Publish image to DockerHub
+        #     command: |
+        #       echo "gaurav_Docker1" docker login -u "gau1rav" --password-stdin
+        #       IMAGE_TAG = "LTS"
+        #       docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
+        #       docker push $IMAGE_NAME:$IMAGE_TAG
 workflows:
   version: 2
   
@@ -91,8 +94,3 @@ workflows:
             branches:
               only:
                 -develop
-      
-
-  
-
-

@@ -6,9 +6,10 @@ jobs:
       - image: cimg/node:15.10.0
     steps:
       - checkout
+      - setup_remote_docker
       - run: 
           name: Docker build command
-          command: echo "Here we will build the docker"
+          command: docker build -t test-image .
   docker-run:
     docker:
       - image: cimg/node:15.10.0
